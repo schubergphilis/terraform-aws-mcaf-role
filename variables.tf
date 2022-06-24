@@ -27,16 +27,13 @@ variable "permissions_boundary" {
   description = "The permissions boundary to set on the role"
 }
 
-variable "principal_type" {
-  type        = string
-  default     = ""
-  description = "The type of assume role principal"
-}
-
 variable "principal_identifiers" {
-  type        = list(string)
+  type = list(object({
+    identifiers = list(string)
+    type        = string
+  }))
   default     = []
-  description = "List of identifiers for principals"
+  description = "List object of identifiers with type for principals"
 }
 
 variable "policy_arns" {

@@ -4,13 +4,17 @@ locals {
 }
 
 data "aws_iam_policy_document" "default" {
-  statement {
-    actions = [
-      "sts:AssumeRole"
-    ]
-    principals {
-      type        = var.principal_type
-      identifiers = var.principal_identifiers
+
+  dynamic "statement" {
+    for_each = { for k, v in var.principal_identifiers : v.type => v.identifiers }
+    content {
+      actions = [
+        "sts:AssumeRole"
+      ]
+      principals {
+        type        = statement.key
+        identifiers = statement.value
+      }
     }
   }
 }

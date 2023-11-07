@@ -46,7 +46,10 @@ variable "principal_identifiers" {
 }
 
 variable "policy_arns" {
-  type        = set(string)
+  type = list(object({
+    description = string
+    arn         = string
+  }))
   default     = []
   description = "A set of policy ARNs to attach to the user"
 }
@@ -62,7 +65,6 @@ variable "role_policy" {
   default     = null
   description = "The IAM policy to attach to the role"
 }
-
 
 variable "tags" {
   type        = map(string)

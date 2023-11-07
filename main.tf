@@ -32,8 +32,8 @@ resource "aws_iam_role_policy" "default" {
 }
 
 resource "aws_iam_role_policy_attachment" "default" {
-  for_each = var.policy_arns
+  for_each = length(var.policy_arns) != 0 ? { for v in var.policy_arns : v.description => v } : {}
 
   role       = aws_iam_role.default.name
-  policy_arn = each.value
+  policy_arn = each.value.arn
 }

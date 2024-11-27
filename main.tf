@@ -17,6 +17,7 @@ data "aws_iam_policy_document" "default" {
 
 resource "aws_iam_role" "default" {
   name                  = "${var.name}${var.postfix ? "Role" : ""}"
+  name_prefix           = var.name_prefix
   assume_role_policy    = local.assume_policy
   description           = var.description
   force_detach_policies = var.force_detach_policies
@@ -29,9 +30,10 @@ resource "aws_iam_role" "default" {
 resource "aws_iam_role_policy" "default" {
   count = local.create_policy ? 1 : 0
 
-  name   = "${var.name}${var.postfix ? "Policy" : ""}"
-  role   = aws_iam_role.default.id
-  policy = var.role_policy
+  name        = "${var.name}${var.postfix ? "Policy" : ""}"
+  name_prefix = var.name_prefix
+  role        = aws_iam_role.default.id
+  policy      = var.role_policy
 }
 
 resource "aws_iam_role_policy_attachment" "default" {

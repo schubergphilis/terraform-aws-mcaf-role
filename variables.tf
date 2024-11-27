@@ -1,6 +1,23 @@
 variable "name" {
   type        = string
-  description = "The name of the role"
+  default     = null
+  description = "The name of the role.  Conflicts with `name_prefix`."
+
+  validation {
+    condition     = var.name != null ? length(var.name) <= 63 : true
+    error_message = "The name must be less than or equal to 63 characters in length"
+  }
+}
+
+variable "name_prefix" {
+  type        = string
+  default     = null
+  description = "Creates a unique role and policy name beginning with the specified prefix. Conflicts with `name`."
+
+  validation {
+    condition     = var.name_prefix != null ? length(var.name_prefix) <= 37 : true
+    error_message = "The name prefix must be less than or equal to 37 characters in length"
+  }
 }
 
 variable "assume_policy" {

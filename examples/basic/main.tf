@@ -5,6 +5,6 @@ provider "aws" {
 module "example_role" {
   source = "../.."
 
-  name        = "example"
+  name_prefix = "Example"
   policy_arns = ["arn:aws:iam::aws:policy/ReadOnlyAccess"]
 }

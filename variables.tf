@@ -1,8 +1,3 @@
-variable "name" {
-  type        = string
-  description = "The name of the role"
-}
-
 variable "assume_policy" {
   type        = string
   default     = null
@@ -33,10 +28,32 @@ variable "max_session_duration" {
   description = "The maximum session duration (in seconds) for the role"
 }
 
+variable "name_prefix" {
+  type        = string
+  default     = null
+  description = "Name prefix of the role. Conflicts with `name`."
+}
+
+variable "name" {
+  type        = string
+  default     = null
+  description = "Name of the role. Conflicts with `name_prefix`."
+
+  validation {
+    condition     = var.name == null || var.name_prefix == null
+    error_message = "Only one of 'name' or 'name_prefix' can be defined."
+  }
+}
+
 variable "path" {
   type        = string
   default     = "/"
   description = "Path to the role"
+
+  validation {
+    condition     = var.path == "/" || length(regex("^/.+/$", var.path)) > 0
+    error_message = "The path must be '/' or start and end with '/' (e.g., '/custom/')."
+  }
 }
 
 variable "permissions_boundary" {
@@ -60,19 +77,19 @@ variable "principal_identifiers" {
 variable "policy_arns" {
   type        = set(string)
   default     = []
-  description = "A set of policy ARNs to attach to the user"
+  description = "A set of policy ARNs to attach to the role"
 }
 
 variable "postfix" {
   type        = bool
   default     = true
-  description = "Postfix the role and policy names with Role and Policy"
+  description = "Postfix the role and policy name or name_prefix with Role and Policy"
 }
 
 variable "role_policy" {
   type        = string
   default     = null
-  description = "The IAM policy to attach to the role"
+  description = "The JSON encoded IAM policy to attach to the role"
 }
 
 variable "tags" {

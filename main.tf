@@ -21,8 +21,8 @@ resource "aws_iam_role" "default" {
   description           = var.description
   force_detach_policies = var.force_detach_policies
   max_session_duration  = var.max_session_duration
-  name                  = "${var.name}${var.postfix ? "Role" : ""}"
-  name_prefix           = "${var.name_prefix}${var.postfix ? "Role" : ""}"
+  name                  = var.name != null ? "${var.name}${var.postfix ? "Role" : ""}" : null
+  name_prefix           = var.name_prefix != null ? "${var.name_prefix}${var.postfix ? "Role" : ""}" : null
   path                  = var.path
   permissions_boundary  = var.permissions_boundary
   tags                  = var.tags

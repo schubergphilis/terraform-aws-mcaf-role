@@ -40,8 +40,8 @@ variable "name" {
   description = "Name of the role. Conflicts with `name_prefix`."
 
   validation {
-    condition     = var.name == null || var.name_prefix == null
-    error_message = "Only one of 'name' or 'name_prefix' can be defined."
+    condition     = (var.name == null && var.name_prefix != null) || (var.name != null && var.name_prefix == null)
+    error_message = "Exactly one of 'name' or 'name_prefix' must be defined."
   }
 }
 

@@ -31,8 +31,8 @@ resource "aws_iam_role" "default" {
 resource "aws_iam_role_policy" "default" {
   count = local.create_policy ? 1 : 0
 
-  name        = "${var.name}${var.postfix ? "Policy" : ""}"
-  name_prefix = "${var.name_prefix}${var.postfix ? "Policy" : ""}"
+  name        = var.name != null ? "${var.name}${var.postfix ? "Policy" : ""}" : null
+  name_prefix = var.name_prefix != null ? "${var.name_prefix}${var.postfix ? "Policy" : ""}" : null
   policy      = var.role_policy
   role        = aws_iam_role.default.id
 }

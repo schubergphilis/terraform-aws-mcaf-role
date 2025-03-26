@@ -1,6 +1,13 @@
 locals {
   assume_policy = var.assume_policy != null ? var.assume_policy : data.aws_iam_policy_document.default.json
-  create_policy = var.create_policy != null ? var.create_policy : var.role_policy != null
+
+  # If the user explicitly sets create_policy, honor it.
+  # Otherwise, fall back to checking if role_policy is provided.
+  create_policy = (
+    var.create_policy != null
+    ? var.create_policy
+    : (var.role_policy != null)
+  )
 }
 
 data "aws_iam_policy_document" "default" {
@@ -28,13 +35,18 @@ resource "aws_iam_role" "default" {
   tags                  = var.tags
 }
 
-resource "aws_iam_role_policy" "default" {
-  count = local.create_policy ? 1 : 0
+data "aws_iam_policy_document" "empty" {
+  # No statements = empty policy document
+}
 
+resource "aws_iam_role_policy" "default" {
+  # no count, no for_each
   name        = var.name != null ? "${var.name}${var.postfix ? "Policy" : ""}" : null
   name_prefix = var.name_prefix != null ? "${var.name_prefix}${var.postfix ? "Policy" : ""}" : null
-  policy      = var.role_policy
   role        = aws_iam_role.default.id
+
+  # If local.create_policy is unknown at plan time or false, just attach an empty policy.
+  policy = local.create_policy ? var.role_policy : data.aws_iam_policy_document.empty.json
 }
 
 resource "aws_iam_role_policy_attachment" "default" {
